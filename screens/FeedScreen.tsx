@@ -188,14 +188,36 @@ export function FeedScreen() {
             <PostCard key={h.id} hang={h} />
           ))}
 
+          {/* Finite-feed floor — an honest stop cue, not infinite scroll
+              (anti-doom-scroll; see DESIGN_NOTES §10). */}
+          {list.length > 0 && (lens === "nearby" || lens === "thisweek") && (
+            <View style={styles.caughtUp}>
+              <Text style={styles.caughtUpTitle}>You're all caught up ✓</Text>
+              <Text style={styles.caughtUpSub}>
+                That's everyone nearby{lens === "thisweek" ? " this week" : " today"}. No endless
+                scroll here — go say hi to someone, or check back later.
+              </Text>
+            </View>
+          )}
+
+          {/* Empty state as a seeding invitation, not a dead end
+              (cold-start "ghost town" fix; see DESIGN_NOTES §3 / §14). */}
           {list.length === 0 && (
-            <View style={{ alignItems: "center", paddingVertical: 48, gap: 6 }}>
-              <Text style={{ fontSize: 14, fontWeight: "600", color: colors.foreground }}>
-                {savedOnly ? "No saved tips yet" : "Nothing here yet"}
+            <View style={styles.emptyWrap}>
+              <Text style={{ fontSize: 34 }}>{savedOnly ? "🔖" : "👋"}</Text>
+              <Text style={styles.emptyTitle}>
+                {savedOnly ? "No saved tips yet" : `Be the first in ${me.homeLabel.split(" (")[0]}`}
               </Text>
               <Text style={sh.centerSub}>
-                {savedOnly ? "Tap the bookmark on any tip to keep it." : "Be the first to post."}
+                {savedOnly
+                  ? "Tap the bookmark on any tip to keep it here."
+                  : "Quiet right now — that's your opening. Post a low-key hangout and people nearby will see it."}
               </Text>
+              {!savedOnly && (
+                <Pressable onPress={() => router.push("/create")} style={styles.emptyBtn}>
+                  <Text style={styles.emptyBtnText}>Post the first hangout</Text>
+                </Pressable>
+              )}
             </View>
           )}
         </ScrollView>
@@ -269,6 +291,19 @@ const styles = StyleSheet.create({
     paddingVertical: 9,
   },
   nudgeBtnText: { fontSize: 13, fontWeight: "700", color: colors.white },
+  caughtUp: { alignItems: "center", paddingVertical: 28, paddingHorizontal: 24, gap: 4 },
+  caughtUpTitle: { fontSize: 14, fontWeight: "700", color: colors.primaryDark },
+  caughtUpSub: { textAlign: "center", fontSize: 13, lineHeight: 19, color: colors.muted },
+  emptyWrap: { alignItems: "center", paddingVertical: 44, paddingHorizontal: 24, gap: 8 },
+  emptyTitle: { fontSize: 16, fontWeight: "700", color: colors.foreground },
+  emptyBtn: {
+    marginTop: 6,
+    borderRadius: 999,
+    backgroundColor: colors.primaryDark,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+  },
+  emptyBtnText: { fontSize: 13, fontWeight: "700", color: colors.white },
   fab: {
     position: "absolute",
     bottom: 24,

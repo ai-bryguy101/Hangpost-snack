@@ -29,6 +29,27 @@ const AGE_PRESETS: { label: string; range: [number, number] | null }[] = [
 ];
 const PRONOUN_OPTIONS = ["she/her", "he/him", "they/them"];
 
+/** One-tap starters that prefill an editable draft — the fix for the
+ * blank-page problem (the #1 reason people lurk instead of post). Tapping
+ * one drops in a friendly, low-stakes draft (and a sensible time for
+ * hangouts) that the user can edit. Research: low-friction posting + the
+ * lurker→poster ladder (see DESIGN_NOTES §14). */
+const HANGOUT_STARTERS: { emoji: string; label: string; body: string; hour: number }[] = [
+  { emoji: "☕", label: "Coffee", body: "Grabbing coffee and getting some work done — anyone want to co-work for a couple hours? ☕", hour: 10 },
+  { emoji: "🏃", label: "Run", body: "Easy morning run, all paces welcome — come say hi. 🏃", hour: 8 },
+  { emoji: "🍻", label: "Drinks", body: "Grabbing a drink after work — pull up, the more the merrier. 🍻", hour: 18 },
+  { emoji: "🍜", label: "Dinner", body: "Dinner crew? Trying somewhere new — looking for a few people to join. 🍜", hour: 19 },
+  { emoji: "🎲", label: "Games", body: "Board-games night — bring nothing but yourself, all skill levels. 🎲", hour: 19 },
+  { emoji: "🚶", label: "Walk", body: "Going for a walk to explore the neighborhood — join me? 🚶", hour: 17 },
+];
+
+const TIP_STARTERS: { emoji: string; label: string; body: string }[] = [
+  { emoji: "🍴", label: "Food rec", body: "Local food rec: " },
+  { emoji: "🚇", label: "Transit", body: "Transit heads-up: " },
+  { emoji: "🎟️", label: "Free event", body: "Free thing to do this week: " },
+  { emoji: "💡", label: "New in town", body: "If you just moved here: " },
+];
+
 function hourLabel(h: number): string {
   if (h === 12) return "12 PM";
   return h < 12 ? `${h} AM` : `${h - 12} PM`;
@@ -76,6 +97,11 @@ export function CreatePostScreen() {
         .map((i) => DAYS_SHORT[i])
         .join(" · ");
     return null;
+  }
+
+  function applyStarter(s: { body: string; hour?: number }) {
+    setBody(s.body);
+    if (type === "hangout" && s.hour !== undefined) setHour(s.hour);
   }
 
   function submit() {
@@ -145,6 +171,28 @@ export function CreatePostScreen() {
             </Text>
           )}
         </View>
+
+        {/* Quick-start templates — the fix for the blank-page problem.
+            Shown until there's a draft; tapping one prefills editable copy. */}
+        {body.trim().length === 0 && (
+          <View>
+            <Text style={sh.fieldLabel}>Quick start</Text>
+            <View style={styles.chipRow}>
+              {(type === "hangout" ? HANGOUT_STARTERS : TIP_STARTERS).map((s) => (
+                <Pressable key={s.label} onPress={() => applyStarter(s)} style={[styles.chip, styles.chipOff]}>
+                  <Text style={styles.starterText}>
+                    {s.emoji} {s.label}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            {type === "hangout" && (
+              <Text style={sh.hint}>
+                Low-key counts — you're opening a door, not hosting an event. Tap one, then edit anything.
+              </Text>
+            )}
+          </View>
+        )}
 
         {/* Body */}
         <TextInput
@@ -388,6 +436,7 @@ const styles = StyleSheet.create({
   },
   rowTitle: { fontSize: 14, fontWeight: "600", color: colors.foreground },
   refineLabel: { marginBottom: 6, fontSize: 12, fontWeight: "600", color: colors.muted },
+  starterText: { fontSize: 13, fontWeight: "600", color: colors.foreground },
   radio: {
     height: 20,
     width: 20,
