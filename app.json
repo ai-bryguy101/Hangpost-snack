@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "Hangpost (full vision)",
+    "slug": "hangpost-snack-full",
+    "platforms": ["ios", "android", "web"],
+    "orientation": "portrait",
+    "userInterfaceStyle": "light"
+  }
+}

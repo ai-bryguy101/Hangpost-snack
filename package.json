@@ -1,0 +1,18 @@
+{
+  "name": "hangpost-snack-full",
+  "version": "0.1.0",
+  "description": "Hangpost — the COMPLETE product vision, end to end, for UI/UX iteration at snack.expo.dev",
+  "main": "App.tsx",
+  "dependencies": {
+    "expo": "*",
+    "expo-status-bar": "*",
+    "expo-linear-gradient": "*",
+    "react": "*",
+    "react-dom": "*",
+    "react-native": "*",
+    "react-native-web": "*",
+    "react-native-safe-area-context": "*",
+    "react-native-svg": "*",
+    "lucide-react-native": "*"
+  }
+}
