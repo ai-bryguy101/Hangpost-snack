@@ -13,6 +13,7 @@ import { Avatar } from "../components/ui/Avatar";
 import { Button } from "../components/ui/Button";
 import { Commonalities } from "../components/Commonalities";
 import { SafetyMenu } from "../components/SafetyMenu";
+import { HangAgain } from "../components/HangAgain";
 
 /** Discovery: daily picks (reasons, never scores) + every lane that
  * re-introduces the same nearby people until they're friends. */
@@ -89,25 +90,28 @@ export function PeopleScreen() {
         {met.length > 0 && (
           <View style={{ gap: 8 }}>
             <Text style={sh.sectionLabel}>People you met</Text>
+            <Text style={sh.hint}>
+              The second hang is where it sticks — invite them to something, no planning required.
+            </Text>
             {met.map((id) => {
               const p = personOf(id);
               return (
-                <View key={id} style={[sh.personRow, sh.cardShadow]}>
-                  <Pressable onPress={() => router.push({ pathname: "/person/[id]", params: { id } })}>
-                    <Avatar name={p.name} src={p.avatar} verified={p.verified} />
-                  </Pressable>
-                  <View style={{ flex: 1 }}>
-                    <Text style={sh.personName}>{p.name}</Text>
-                    <Text style={sh.personMeta} numberOfLines={1}>
-                      Met at {pastHang?.venue} · {relativeTime(pastHang?.time ?? "")}
-                    </Text>
+                <View key={id} style={[styles.metCard, sh.cardShadow]}>
+                  <View style={sh.row}>
+                    <Pressable onPress={() => router.push({ pathname: "/person/[id]", params: { id } })}>
+                      <Avatar name={p.name} src={p.avatar} verified={p.verified} />
+                    </Pressable>
+                    <View style={{ flex: 1 }}>
+                      <Text style={sh.personName}>{p.name}</Text>
+                      <Text style={sh.personMeta} numberOfLines={1}>
+                        Met at {pastHang?.venue} · {relativeTime(pastHang?.time ?? "")}
+                      </Text>
+                    </View>
+                    <Pressable onPress={() => dismissMet(id)} hitSlop={8} style={{ paddingHorizontal: 4 }}>
+                      <Text style={sh.linkMuted}>Dismiss</Text>
+                    </Pressable>
                   </View>
-                  <Button size="sm" onPress={() => handleConnect(p)} style={{ borderRadius: 999 }}>
-                    Keep in touch
-                  </Button>
-                  <Pressable onPress={() => dismissMet(id)} hitSlop={8} style={{ paddingHorizontal: 6 }}>
-                    <Text style={sh.linkMuted}>Dismiss</Text>
-                  </Pressable>
+                  <HangAgain person={p} onInvited={() => dismissMet(id)} />
                 </View>
               );
             })}
@@ -282,6 +286,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   heroBtnText: { fontSize: 12, fontWeight: "700", color: colors.white },
+  metCard: { borderRadius: radiusCard, backgroundColor: colors.surface, padding: 14, gap: 12 },
   pickCard: { borderRadius: radiusCard, backgroundColor: colors.surface, padding: 16, gap: 12 },
   pickHeader: { flexDirection: "row", alignItems: "flex-start", gap: 8 },
   pickName: { fontSize: 16, fontWeight: "700", color: colors.foreground },

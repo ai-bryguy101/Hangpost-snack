@@ -14,6 +14,7 @@ import { Chip } from "../components/ui/Chip";
 import { Commonalities } from "../components/Commonalities";
 import { SafetyMenu } from "../components/SafetyMenu";
 import { PostCard } from "../components/PostCard";
+import { HangAgain } from "../components/HangAgain";
 
 /** A person, profile-first: who they are, what you share, and — the Hangpost
  * twist — the hangouts you could simply JOIN instead of cold-DMing them. */
@@ -28,6 +29,7 @@ export function PersonProfileScreen() {
   if (!p) return null;
   const edge = edges[p.id];
   const connected = edge === "connected";
+  const metThem = (hangs.find((h) => h.id === "h-past")?.goingIds ?? []).includes(p.id);
 
   const theirHangs = hangs
     .filter((h) => h.type === "hangout" && h.audience === "everyone")
@@ -94,6 +96,12 @@ export function PersonProfileScreen() {
             <Text style={{ fontSize: 14, fontWeight: "600", color: colors.foreground }}>Message</Text>
           </Button>
         </View>
+
+        {(connected || metThem) && (
+          <View style={[sh.card, sh.cardShadow]}>
+            <HangAgain person={p} />
+          </View>
+        )}
 
         <View style={[sh.card, sh.cardShadow, { gap: 10 }]}>
           <Commonalities person={p} />

@@ -59,7 +59,7 @@ export function CreatePostScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { me, createHang, communities, edges, personOf } = useStore();
-  const { communityId } = useLocalSearchParams<{ communityId?: string }>();
+  const { communityId, inviteId } = useLocalSearchParams<{ communityId?: string; inviteId?: string }>();
 
   const [type, setType] = useState<"hangout" | "tip">("hangout");
   const [body, setBody] = useState("");
@@ -69,10 +69,10 @@ export function CreatePostScreen() {
   const [repeat, setRepeat] = useState<"none" | "daily" | "weekly" | "days">("none");
   const [repeatDays, setRepeatDays] = useState<number[]>([]);
   const [capacity, setCapacity] = useState("");
-  const [audience, setAudience] = useState<Audience>("everyone");
+  const [audience, setAudience] = useState<Audience>(inviteId ? "invite" : "everyone");
   const [agePreset, setAgePreset] = useState(0);
   const [pronouns, setPronouns] = useState<string[]>([]);
-  const [inviteIds, setInviteIds] = useState<string[]>([]);
+  const [inviteIds, setInviteIds] = useState<string[]>(inviteId ? [inviteId] : []);
 
   const community = communities.find((c) => c.id === communityId);
   const connections = Object.entries(edges)
