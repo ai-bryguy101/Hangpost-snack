@@ -1,17 +1,20 @@
 import { useState, type ReactNode } from "react";
 import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ArrowLeft, BadgeCheck, ShieldAlert, Users } from "lucide-react-native";
+import { ArrowLeft, BadgeCheck, GraduationCap, MapPin, ShieldAlert, Users } from "lucide-react-native";
 
 import { useStore, type Me } from "../lib/store";
 import { DEMO_ME } from "../data/seed";
 import { PLACES, RADII, type Place } from "../lib/places";
+import { CITIES } from "../lib/cities";
+import { COLLEGES } from "../lib/colleges";
 import { showToast } from "../lib/toast";
 import { colors } from "../theme/colors";
 import { sh } from "../theme/shared";
 import { Button } from "../components/ui/Button";
 import { TagPicker } from "../components/TagPicker";
 import { PlacePicker } from "../components/PlacePicker";
+import { ComboField } from "../components/ComboField";
 
 /** 5-step onboarding: about → what you're into → intro + photo verify →
  * home base → contacts. Every field is structured (no free bio — ADR-0008's
@@ -176,12 +179,24 @@ export function OnboardingScreen({ onDone, onBack }: { onDone: () => void; onBac
                 })}
               </View>
             </Field>
-            <Field label="Hometown" hint="a strong friendship signal — people from home rank higher">
-              <TextInput value={hometown} onChangeText={setHometown} placeholder="Columbus, OH" placeholderTextColor={colors.placeholder} style={sh.input} />
-            </Field>
-            <Field label="College" hint="optional">
-              <TextInput value={college} onChangeText={setCollege} placeholder="Ohio State University" placeholderTextColor={colors.placeholder} style={sh.input} />
-            </Field>
+            <ComboField
+              label="Hometown"
+              hint="a strong friendship signal — people from home rank higher"
+              value={hometown}
+              onChangeText={setHometown}
+              options={CITIES}
+              placeholder="Columbus, OH"
+              icon={MapPin}
+            />
+            <ComboField
+              label="College"
+              hint="optional — pick yours so fellow alumni match"
+              value={college}
+              onChangeText={setCollege}
+              options={COLLEGES}
+              placeholder="Ohio State University"
+              icon={GraduationCap}
+            />
             <Field label="Major" hint="a surprisingly strong friendship signal — optional">
               <TextInput value={major} onChangeText={setMajor} placeholder="Finance" placeholderTextColor={colors.placeholder} style={sh.input} />
             </Field>

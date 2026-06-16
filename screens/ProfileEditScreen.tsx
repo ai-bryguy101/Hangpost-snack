@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ArrowLeft } from "lucide-react-native";
+import { ArrowLeft, GraduationCap, MapPin } from "lucide-react-native";
 
 import { useStore } from "../lib/store";
 import { useRouter } from "../lib/router";
@@ -10,6 +10,9 @@ import { colors } from "../theme/colors";
 import { sh } from "../theme/shared";
 import { Button } from "../components/ui/Button";
 import { TagPicker } from "../components/TagPicker";
+import { ComboField } from "../components/ComboField";
+import { CITIES } from "../lib/cities";
+import { COLLEGES } from "../lib/colleges";
 
 const PHOTO_OPTIONS = [5, 11, 15, 32, 49, 56].map((n) => `https://i.pravatar.cc/150?img=${n}`);
 const HOBBY_IDEAS = ["running", "bouldering", "cooking", "photography", "board games", "soccer", "yoga", "pottery", "hiking", "guitar"];
@@ -105,14 +108,22 @@ export function ProfileEditScreen() {
           <Text style={sh.fieldLabel}>Age</Text>
           <TextInput value={age} onChangeText={setAge} keyboardType="number-pad" style={sh.input} maxLength={3} />
         </View>
-        <View>
-          <Text style={sh.fieldLabel}>Hometown</Text>
-          <TextInput value={hometown} onChangeText={setHometown} style={sh.input} placeholder="Columbus, OH" placeholderTextColor={colors.placeholder} />
-        </View>
-        <View>
-          <Text style={sh.fieldLabel}>College</Text>
-          <TextInput value={college} onChangeText={setCollege} style={sh.input} placeholder="Ohio State University" placeholderTextColor={colors.placeholder} />
-        </View>
+        <ComboField
+          label="Hometown"
+          value={hometown}
+          onChangeText={setHometown}
+          options={CITIES}
+          placeholder="Columbus, OH"
+          icon={MapPin}
+        />
+        <ComboField
+          label="College"
+          value={college}
+          onChangeText={setCollege}
+          options={COLLEGES}
+          placeholder="Ohio State University"
+          icon={GraduationCap}
+        />
         <View>
           <Text style={sh.fieldLabel}>Major</Text>
           <TextInput value={major} onChangeText={setMajor} style={sh.input} placeholder="Finance" placeholderTextColor={colors.placeholder} />
