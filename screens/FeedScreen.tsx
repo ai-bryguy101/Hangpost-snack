@@ -11,11 +11,14 @@ import { sh } from "../theme/shared";
 import { PostCard } from "../components/PostCard";
 import { CommunitiesTab } from "../components/CommunitiesTab";
 
-type Lens = "nearby" | "thisweek" | "cityguide" | "communities";
+// Lenses (ADR-0018, amended 2026-06-17): "This week" was merged into Nearby —
+// the Nearby feed already lists upcoming hangouts (newest first), so a separate
+// time-sorted lens was redundant. The calendar icon → Agenda is the commitments
+// view instead.
+type Lens = "nearby" | "cityguide" | "communities";
 
 const LENSES: { key: Lens; label: string }[] = [
   { key: "nearby", label: "Nearby" },
-  { key: "thisweek", label: "This week" },
   { key: "cityguide", label: "City Guide" },
   { key: "communities", label: "Communities" },
 ];
@@ -53,19 +56,15 @@ export function FeedScreen() {
       ? visible
           .filter((h) => h.type === "tip" || isFuture(h))
           .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-      : lens === "thisweek"
-        ? visible
-            .filter((h) => h.type === "hangout" && isFuture(h))
-            .sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""))
-        : visible
-            .filter((h) => h.type === "tip")
-            .filter((h) => (savedOnly ? h.savedByMe : true))
-            .filter((h) => {
-              const q = tipSearch.trim().toLowerCase();
-              if (!q) return true;
-              return h.body.toLowerCase().includes(q) || h.hashtags.some((t) => t.includes(q));
-            })
-            .sort((a, b) => tipScore(b) - tipScore(a) || b.createdAt.localeCompare(a.createdAt));
+      : visible
+          .filter((h) => h.type === "tip")
+          .filter((h) => (savedOnly ? h.savedByMe : true))
+          .filter((h) => {
+            const q = tipSearch.trim().toLowerCase();
+            if (!q) return true;
+            return h.body.toLowerCase().includes(q) || h.hashtags.some((t) => t.includes(q));
+          })
+          .sort((a, b) => tipScore(b) - tipScore(a) || b.createdAt.localeCompare(a.createdAt));
 
   const liveCount = todayHangs.length;
 
@@ -86,13 +85,11 @@ export function FeedScreen() {
           </View>
         </View>
         <Text style={styles.headline}>
-          {lens === "thisweek"
-            ? "This week nearby"
-            : lens === "cityguide"
-              ? "City Guide"
-              : lens === "communities"
-                ? "Communities"
-                : `Nearby in ${me.homeLabel.split(" (")[0]}`}
+          {lens === "cityguide"
+            ? "City Guide"
+            : lens === "communities"
+              ? "Communities"
+              : `Nearby in ${me.homeLabel.split(" (")[0]}`}
         </Text>
         <Pressable onPress={() => router.push("/set-location")} style={styles.locRow} hitSlop={6}>
           <MapPin size={12} color={colors.primaryDark} />
@@ -190,12 +187,12 @@ export function FeedScreen() {
 
           {/* Finite-feed floor — an honest stop cue, not infinite scroll
               (anti-doom-scroll; see DESIGN_NOTES §10). */}
-          {list.length > 0 && (lens === "nearby" || lens === "thisweek") && (
+          {list.length > 0 && lens === "nearby" && (
             <View style={styles.caughtUp}>
               <Text style={styles.caughtUpTitle}>You're all caught up ✓</Text>
               <Text style={styles.caughtUpSub}>
-                That's everyone nearby{lens === "thisweek" ? " this week" : " today"}. No endless
-                scroll here — go say hi to someone, or check back later.
+                That's everyone nearby right now. No endless scroll here — go say hi to
+                someone, or check back later.
               </Text>
             </View>
           )}
