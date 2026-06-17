@@ -9,15 +9,13 @@ import { showToast } from "../lib/toast";
 import { colors } from "../theme/colors";
 import { sh } from "../theme/shared";
 import { Button } from "../components/ui/Button";
-import { TagPicker } from "../components/TagPicker";
+import { GroupedTagPicker } from "../components/GroupedTagPicker";
 import { ComboField } from "../components/ComboField";
 import { CITIES } from "../lib/cities";
 import { COLLEGES } from "../lib/colleges";
+import { HOBBY_GROUPS, INTEREST_GROUPS, LIKE_GROUPS } from "../data/interests";
 
 const PHOTO_OPTIONS = [5, 11, 15, 32, 49, 56].map((n) => `https://i.pravatar.cc/150?img=${n}`);
-const HOBBY_IDEAS = ["running", "bouldering", "cooking", "photography", "board games", "soccer", "yoga", "pottery", "hiking", "guitar"];
-const INTEREST_IDEAS = ["coffee", "live music", "museums", "happy hours", "book clubs", "startups", "food trucks", "markets"];
-const LIKE_IDEAS = ["indie music", "sci-fi", "true crime pods", "jazz", "fantasy novels", "film scores"];
 
 /** Edit = the same structured fields as onboarding (no free bio, ever). */
 export function ProfileEditScreen() {
@@ -133,16 +131,16 @@ export function ProfileEditScreen() {
           <TextInput value={job} onChangeText={setJob} style={sh.input} placeholder="Consulting analyst at Deloitte" placeholderTextColor={colors.placeholder} />
         </View>
         <View>
-          <Text style={sh.fieldLabel}>Hobbies — things you ACTUALLY do</Text>
-          <TagPicker suggestions={HOBBY_IDEAS} selected={hobbies} onChange={setHobbies} />
+          <Text style={sh.fieldLabel}>What you actually do</Text>
+          <GroupedTagPicker groups={HOBBY_GROUPS} selected={hobbies} onChange={setHobbies} addPlaceholder="Add a hobby…" />
         </View>
         <View>
-          <Text style={sh.fieldLabel}>Interests</Text>
-          <TagPicker suggestions={INTEREST_IDEAS} selected={interests} onChange={setInterests} />
+          <Text style={sh.fieldLabel}>What you're into</Text>
+          <GroupedTagPicker groups={INTEREST_GROUPS} selected={interests} onChange={setInterests} addPlaceholder="Add an interest…" />
         </View>
         <View>
-          <Text style={sh.fieldLabel}>Likes</Text>
-          <TagPicker suggestions={LIKE_IDEAS} selected={likes} onChange={setLikes} />
+          <Text style={sh.fieldLabel}>Your taste</Text>
+          <GroupedTagPicker groups={LIKE_GROUPS} selected={likes} onChange={setLikes} addPlaceholder="Add a band, artist, show, author…" />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

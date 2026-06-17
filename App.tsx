@@ -117,6 +117,23 @@ function Navigator({ onSignOut }: { onSignOut: () => void }) {
   );
 }
 
+/** First-picks runs before the tab app, but still needs the router so a pick can
+ * open that person's profile (and from there, their hangouts/chat). Same overlay
+ * pattern as Navigator, with FirstPicks as the base instead of the tabs. */
+function FirstPicksStage({ onDone }: { onDone: () => void }) {
+  const stack = useRouteStack();
+  return (
+    <View style={styles.root}>
+      <FirstPicksScreen onDone={onDone} />
+      {stack.slice(1).map((route, i) => (
+        <View key={`${route.pathname}-${i}`} style={[StyleSheet.absoluteFill, styles.overlay]}>
+          <ScreenFor route={route} onSignOut={onDone} />
+        </View>
+      ))}
+    </View>
+  );
+}
+
 function Root() {
   const [stage, setStage] = useState<Stage>("welcome");
 
@@ -131,7 +148,12 @@ function Root() {
     return <PhoneVerifyScreen onVerified={() => setStage("onboarding")} onBack={() => setStage("welcome")} />;
   if (stage === "onboarding")
     return <OnboardingScreen onDone={() => setStage("firstpicks")} onBack={() => setStage("verify")} />;
-  if (stage === "firstpicks") return <FirstPicksScreen onDone={() => setStage("app")} />;
+  if (stage === "firstpicks")
+    return (
+      <RouterProvider>
+        <FirstPicksStage onDone={() => setStage("app")} />
+      </RouterProvider>
+    );
 
   return (
     <RouterProvider>
