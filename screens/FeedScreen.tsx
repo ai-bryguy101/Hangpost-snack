@@ -11,14 +11,16 @@ import { sh } from "../theme/shared";
 import { PostCard } from "../components/PostCard";
 import { CommunitiesTab } from "../components/CommunitiesTab";
 
-// Lenses (ADR-0018, amended 2026-06-17): "This week" was merged into Nearby —
-// the Nearby feed already lists upcoming hangouts (newest first), so a separate
-// time-sorted lens was redundant. The calendar icon → Agenda is the commitments
-// view instead.
+// Lenses: The Bulletin (the city posterboard — upcoming hangouts + local info,
+// newest first; the whole app is already location-scoped, so naming this lens
+// "Nearby" was redundant), City Guide (helpfulness-ranked tips), Communities.
+// The internal key stays "nearby" so the rest of the file doesn't churn.
+// (ADR-0018, amended 2026-06-17: "This week" was merged in — the Bulletin already
+// lists upcoming hangouts; the calendar icon → Your hangouts is the commitments view.)
 type Lens = "nearby" | "cityguide" | "communities";
 
 const LENSES: { key: Lens; label: string }[] = [
-  { key: "nearby", label: "Nearby" },
+  { key: "nearby", label: "The Bulletin" },
   { key: "cityguide", label: "City Guide" },
   { key: "communities", label: "Communities" },
 ];
@@ -29,6 +31,7 @@ export function FeedScreen() {
   const store = useStore();
   const { me, hangs, blocked, firstRun, dismissFirstRun, unreadThreads, myUpcoming } = store;
   const upcomingCount = myUpcoming().length;
+  const areaName = me.homeLabel.split(",")[0].split(" (")[0].trim();
   const [lens, setLens] = useState<Lens>("nearby");
   const [tipSearch, setTipSearch] = useState("");
   const [savedOnly, setSavedOnly] = useState(false);
@@ -98,7 +101,7 @@ export function FeedScreen() {
             ? "City Guide"
             : lens === "communities"
               ? "Communities"
-              : `Nearby in ${me.homeLabel.split(" (")[0]}`}
+              : `The ${areaName} bulletin`}
         </Text>
         <Pressable onPress={() => router.push("/set-location")} style={styles.locRow} hitSlop={6}>
           <MapPin size={12} color={colors.primaryDark} />
@@ -200,7 +203,7 @@ export function FeedScreen() {
             <View style={styles.caughtUp}>
               <Text style={styles.caughtUpTitle}>You're all caught up ✓</Text>
               <Text style={styles.caughtUpSub}>
-                That's everyone nearby right now. No endless scroll here — go say hi to
+                That's the whole bulletin right now. No endless scroll here — go say hi to
                 someone, or check back later.
               </Text>
             </View>
