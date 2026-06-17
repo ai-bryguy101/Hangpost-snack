@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Bookmark, MapPin, MessageCircle, Plus, Search, X } from "lucide-react-native";
+import { Bookmark, CalendarDays, MapPin, MessageCircle, Plus, Search, X } from "lucide-react-native";
 
 import { useStore, type Hang } from "../lib/store";
 import { useRouter } from "../lib/router";
@@ -27,7 +27,8 @@ export function FeedScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const store = useStore();
-  const { me, hangs, blocked, firstRun, dismissFirstRun, unreadThreads } = store;
+  const { me, hangs, blocked, firstRun, dismissFirstRun, unreadThreads, myUpcoming } = store;
+  const upcomingCount = myUpcoming().length;
   const [lens, setLens] = useState<Lens>("nearby");
   const [tipSearch, setTipSearch] = useState("");
   const [savedOnly, setSavedOnly] = useState(false);
@@ -77,6 +78,14 @@ export function FeedScreen() {
           <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
             <Pressable onPress={() => router.push("/search")} hitSlop={8}>
               <Search size={21} color={colors.primaryDark} />
+            </Pressable>
+            <Pressable onPress={() => router.push("/upcoming")} hitSlop={8} accessibilityLabel="Your hangouts">
+              <CalendarDays size={21} color={colors.primaryDark} />
+              {upcomingCount > 0 && (
+                <View style={styles.countBadge}>
+                  <Text style={styles.countBadgeText}>{upcomingCount}</Text>
+                </View>
+              )}
             </Pressable>
             <Pressable onPress={() => router.push("/messages")} hitSlop={8}>
               <MessageCircle size={21} color={colors.primaryDark} />
@@ -243,6 +252,21 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: colors.surface,
   },
+  countBadge: {
+    position: "absolute",
+    top: -7,
+    right: -9,
+    minWidth: 15,
+    height: 15,
+    paddingHorizontal: 3,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.primaryDark,
+    borderWidth: 1.5,
+    borderColor: colors.surface,
+  },
+  countBadgeText: { fontSize: 9, fontWeight: "800", color: colors.white },
   headline: { marginTop: 6, fontSize: 21, fontWeight: "800", color: colors.foreground },
   locRow: { marginTop: 3, flexDirection: "row", alignItems: "center", gap: 4 },
   locText: { fontSize: 12, fontWeight: "600", color: colors.primaryDark },
