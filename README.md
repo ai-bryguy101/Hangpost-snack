@@ -54,8 +54,9 @@ new in town" → contacts sync with consent copy → **your first 10** (connecti
 worth exploring, ranked, connect before you even see the feed). Or *I have an
 account* → straight in as a demo persona with a believable week of history.
 
-**Feed:** liveness strip + a horizontal **Happening today** rail · four lenses
-(Nearby / This week / City Guide / Communities) · first-run welcome nudge · **no
+**Feed:** liveness strip + a horizontal **Happening today** rail · three lenses
+(Nearby / City Guide / Communities; "This week" merged into Nearby 2026-06-17) ·
+first-run welcome nudge · **no
 emoji reactions, by design** — hangouts carry *Interested* / *I'm in*, tips carry
 *Thanks!* (which powers City Guide ranking + the City Expert badge) · City Guide
 with search + hashtag chips + saved-tips filter + City Expert badges · post

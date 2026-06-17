@@ -41,7 +41,7 @@ This mirror lives in a subfolder, so the cleanest browser paths are:
   - **Create an account** = the REAL new-user path: email code →
     onboarding (profile + home base + radius) → empty-state app,
     exactly like a fresh sign-up on live.
-- **Feed** with the four lenses — Nearby · This week · City Guide
+- **Feed** with the three lenses — Nearby · City Guide
   (helpfulness-ranked, searchable, City Expert badges) · Communities —
   scoped to your saved home base, with the set/change home-base flow.
 - **PostCard** with emoji reactions, saves/bookmarks, going +

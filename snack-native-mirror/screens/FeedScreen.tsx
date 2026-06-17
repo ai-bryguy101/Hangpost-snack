@@ -14,31 +14,28 @@ import { MapPin, MessageCircle, Plus, RotateCw, Search, Sparkles } from "lucide-
 
 import { useAuth } from "../lib/auth";
 import { useRouter } from "../lib/router";
-import { fetchFeed, fetchTips, fetchUpcoming, getMyLocation } from "../lib/mockApi";
+import { fetchFeed, fetchTips, getMyLocation } from "../lib/mockApi";
 import type { Post } from "../lib/types";
 import { colors } from "../theme/colors";
 import { Button } from "../components/ui/Button";
 import { PostCard } from "../components/PostCard";
 import { CommunitiesTab } from "../components/CommunitiesTab";
 
-/** Port of apps/native/app/(tabs)/index.tsx — the feed with its four lenses
- * (ADR-0018): Nearby · This week · City Guide · Communities. */
+/** Port of apps/native/app/(tabs)/index.tsx — the feed with its three lenses
+ * (ADR-0018, amended 2026-06-17): Nearby (the location-scoped feed, newest
+ * first — upcoming hangouts surface here, so "This week" was merged in) · City
+ * Guide · Communities. */
 
-type FeedTab = "nearby" | "thisweek" | "cityguide" | "communities";
+type FeedTab = "nearby" | "cityguide" | "communities";
 
 const TABS: { key: FeedTab; label: string }[] = [
   { key: "nearby", label: "Nearby" },
-  { key: "thisweek", label: "This week" },
   { key: "cityguide", label: "City Guide" },
   { key: "communities", label: "Communities" },
 ];
 
-const EMPTY: Record<"nearby" | "thisweek" | "cityguide", { title: string; sub: string }> = {
+const EMPTY: Record<"nearby" | "cityguide", { title: string; sub: string }> = {
   nearby: { title: "Nothing nearby yet", sub: "Be the first to post here." },
-  thisweek: {
-    title: "Nothing on the calendar",
-    sub: "Post a hangout to get something going this week.",
-  },
   cityguide: {
     title: "No tips yet",
     sub: "Share a local tip — best happy hour, transit hacks, hidden gems.",
@@ -75,16 +72,6 @@ export function FeedScreen() {
     },
   });
 
-  const upcomingQuery = useQuery({
-    queryKey: ["upcoming"],
-    enabled: !!isSignedIn && hasLocation && tab === "thisweek",
-    queryFn: async () => {
-      const token = await getToken();
-      if (!token) throw new Error("no token");
-      return fetchUpcoming({ bearerToken: token });
-    },
-  });
-
   const tipsQuery = useQuery({
     queryKey: ["tips", tipSearch],
     enabled: !!isSignedIn && hasLocation && tab === "cityguide",
@@ -95,15 +82,12 @@ export function FeedScreen() {
     },
   });
 
-  const listQuery =
-    tab === "thisweek" ? upcomingQuery : tab === "cityguide" ? tipsQuery : feedQuery;
+  const listQuery = tab === "cityguide" ? tipsQuery : feedQuery;
   const posts: Post[] = listQuery.data?.posts ?? [];
 
   const headline =
-    tab === "thisweek"
-      ? `This week in ${place}`
-      : tab === "cityguide"
-        ? `City Guide · ${place}`
+    tab === "cityguide"
+      ? `City Guide · ${place}`
         : tab === "communities"
           ? "Communities"
           : `Nearby in ${place}`;
