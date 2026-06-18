@@ -1,9 +1,0 @@
-{
-  "expo": {
-    "name": "Hangpost (native mirror)",
-    "slug": "hangpost-snack-native-mirror",
-    "platforms": ["ios", "android", "web"],
-    "orientation": "portrait",
-    "userInterfaceStyle": "light"
-  }
-}
