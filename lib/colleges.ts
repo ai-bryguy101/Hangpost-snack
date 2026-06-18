@@ -13,10 +13,9 @@
  * just-moved college grad, so their school is usually a state regional, not an
  * Ivy). This is still NOT the full ~6,000-institution IPEDS set — the
  * ComboField free-text fallback covers anything unlisted, so an unlisted school
- * never blocks sign-up. For the EXHAUSTIVE ~2,000 four-year set, run
- * `node scripts/build_colleges.mjs` in a Codespace (it needs network egress that
- * the browser sandbox doesn't have) and review the diff — it regenerates this
- * file from a public dataset. */
+ * never blocks sign-up. For the EXHAUSTIVE ~2,000 four-year set, see COLLEGES.md
+ * — a Codespace snippet that regenerates this file from a public dataset (kept as
+ * a doc snippet, not a committed .mjs, because that breaks Snack's git import). */
 export const COLLEGES: readonly string[] = [
   // Ivy League
   "Harvard University",
