@@ -1,5 +1,5 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { BellRing, CalendarCheck, Check, Newspaper, Sparkles, UserPlus } from "lucide-react-native";
+import { BellRing, CalendarCheck, Check, Moon, Newspaper, Sparkles, UserPlus } from "lucide-react-native";
 
 import { useStore, type Notif } from "../lib/store";
 import { useRouter } from "../lib/router";
@@ -30,6 +30,7 @@ export function AlertsScreen() {
       case "reminder": return n.body ?? "Coming up soon";
       case "digest": return n.body ?? "Your week nearby";
       case "comment": return `${who} commented on your post`;
+      case "status": return `${who} ${n.body ?? "is free"}`;
     }
   }
 
@@ -38,12 +39,14 @@ export function AlertsScreen() {
     if (n.kind === "request" || n.kind === "accepted") return UserPlus;
     if (n.kind === "joined_nearby") return Sparkles;
     if (n.kind === "digest") return Newspaper;
+    if (n.kind === "status") return Moon;
     return BellRing;
   }
 
   function open(n: Notif) {
     readNotif(n.id);
-    if (n.hangId) router.push({ pathname: "/post/[id]", params: { id: n.hangId } });
+    if (n.kind === "status") router.push("/tonight");
+    else if (n.hangId) router.push({ pathname: "/post/[id]", params: { id: n.hangId } });
     else if (n.fromId) router.push({ pathname: "/person/[id]", params: { id: n.fromId } });
   }
 

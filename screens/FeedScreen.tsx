@@ -10,6 +10,7 @@ import { colors, radiusCard } from "../theme/colors";
 import { sh } from "../theme/shared";
 import { PostCard } from "../components/PostCard";
 import { CommunitiesTab } from "../components/CommunitiesTab";
+import { StatusStrip } from "../components/StatusStrip";
 
 // Lenses: The Bulletin (the city posterboard — upcoming hangouts + local info,
 // newest first; the whole app is already location-scoped, so naming this lens
@@ -149,6 +150,9 @@ export function FeedScreen() {
         <CommunitiesTab />
       ) : (
         <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 96 }}>
+          {/* Statuses — the lowest-friction posting unlock; your status + who's free */}
+          {lens === "nearby" && <StatusStrip />}
+
           {/* Liveness strip + today rail */}
           {lens === "nearby" && liveCount > 0 && (
             <View>
