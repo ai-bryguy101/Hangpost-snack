@@ -156,6 +156,14 @@ These are the structural problems; everything we build should attack one.
    touch?" from buried states into first-class, celebrated moments. This is the
    moat; it should be the most delightful surface in the app.
 
+**Also shipped in the prototype (2026-06-18): Statuses** — one-tap, ephemeral,
+connection-scoped "I'm free" broadcasts (brand-voice presets, no blank box) + a
+"Tonight" surface (react / "I'm around too" / reply / make-a-plan). The
+lowest-friction *supply* primitive, a rung below hosting — it directly attacks
+the posting tax (§3.5) and the first-action gap (§5), with no-rejection mechanics
+(declining is invisible). Canonical spec:
+`Hangpost-Full-Stack/docs/briefs/STATUS_POSTS.md`.
+
 **P1 — next:**
 4. **Reliability felt, not stated.** Day-of reminder surface, clearer who's-going
    + "usually shows up," scarcity ("2 spots left") as a gentle nudge not a dark
