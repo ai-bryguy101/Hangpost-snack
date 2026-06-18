@@ -55,6 +55,11 @@ Now that this repo is public, the browser paths all work again:
 > and a stale pin fails the import. Unpinned, Snack uses its current default;
 > nothing here depends on a specific SDK. If an import errors on a dependency,
 > accept Snack's suggested version in the prompt.
+>
+> ⚠️ **Keep the repo to `.tsx` / `.ts` / `.json` / `.md` files only.** Snack treats
+> an unknown extension (e.g. a `.mjs` build script) as a binary *asset* and the
+> import dies with *"Failed to upload file asset."* Dev utilities live as snippets
+> in docs (see `COLLEGES.md`), never as committed script files.
 
 ## The full journey to walk (root app)
 
@@ -167,8 +172,8 @@ to iterate the design. Port target is `hangpost-full-stack/apps/native`.
   and the large online universities. The wedge user (a just-moved college grad)
   usually went to a state regional, not an Ivy, so the autocomplete now
   canonicalises where they actually went. Free-text fallback still covers the rest.
-  Bigger again this pass (~580 hand-curated names); for the **exhaustive ~2,000
-  four-year set**, `scripts/build_colleges.mjs` regenerates `lib/colleges.ts`
+  Bigger again this pass (~594 hand-curated names); for the **exhaustive ~2,000
+  four-year set**, the snippet in **`COLLEGES.md`** regenerates `lib/colleges.ts`
   from a public dataset (run it in a Codespace — it needs network the design
   sandbox doesn't have).
 
