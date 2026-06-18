@@ -61,8 +61,9 @@ Now that this repo is public, the browser paths all work again:
 **Entry:** Welcome (brand + group-first safety framing) → *Get started* → phone
 verification (any 6 digits) → 5-step onboarding: about (incl. **birthday — hard
 18+ gate**, plus **major + job**, the background signals right under hometown &
-college) → tag pickers (hobbies / interests / likes, all structured — no free
-bio) → 140-char intro + photo + "verify it's you" → home base + radius + "I'm
+college) → tag pickers (hobbies / interests / likes — type your own at the top or
+tap an idea, all structured, no free bio) → 140-char intro + photo + "verify it's
+you" → home base + radius + "I'm
 new in town" → contacts sync with consent copy → **your first 10** (connections
 worth exploring, ranked, connect before you even see the feed). Or *I have an
 account* → straight in as a demo persona with a believable week of history.
@@ -130,6 +131,25 @@ This repo is now the **single canonical design source**. The duplicate design
 copies that used to be hand-synced alongside it (`hangpost-full-stack/snack-full`
 and the `snack-native-mirror/` copies) were retired so there is exactly one place
 to iterate the design. Port target is `hangpost-full-stack/apps/native`.
+
+## Recent design updates (2026-06-18)
+
+- **"What are you into?" is now write-in-first.** Each section (hobbies /
+  interests / likes) leads with its **add-your-own box at the top** — people
+  write in far more than any list can hold — and the curated themed chips sit
+  below as *ideas to tap*. Your typed additions land in a "Yours ✨" row right
+  under the box. Hobbies stays the first section.
+- **No "match" language anywhere a user can see it.** We never say we "match"
+  people or that people are "matched" — onboarding now talks about *finding the
+  people you'd actually click with* and *finding your people* (brand rule:
+  reasons in words, never a score, and never the word "match"). The autocomplete
+  hints ("Tap a suggestion" / "Not listed") were reworded too.
+- **Much bigger College list** for sign-up — added regional & directional state
+  schools, the Cal State / SUNY campuses, more HBCUs, Catholic/faith-based and
+  other private universities, art/music/design schools, the service academies,
+  and the large online universities. The wedge user (a just-moved college grad)
+  usually went to a state regional, not an Ivy, so the autocomplete now
+  canonicalises where they actually went. Free-text fallback still covers the rest.
 
 ## Recent design updates (2026-06-17)
 
