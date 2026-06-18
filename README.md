@@ -10,28 +10,41 @@ on **mock data only**. There is no backend here: no real accounts, no API keys,
 no secrets. It exists so you can open the app in a browser, walk the whole
 journey, and judge how it *feels* — then iterate on the look and function before
 wiring it into the native iOS app. Production code lives in the private
-`Hangpost-Full-Stack` repo.
+`hangpost-full-stack` repo.
 
-## Two surfaces in this repo
+## This is the design source of truth
 
-| Path | What it is |
-|---|---|
-| **`/` (repo root)** | **The COMPLETE product vision — the target UX.** Every designed flow plus the research-backed pieces a friend-making app needs. **This is the surface to iterate on.** |
-| `snack-native-mirror/` | A faithful mirror of what the native app actually is **today**. The diff between this and the root app is the porting backlog. |
+**`/` (repo root) is the COMPLETE product vision — the target UX, and the one
+place the design is iterated.** Every designed flow plus the research-backed
+pieces a friend-making app needs. There are no other copies to keep in sync:
+the old `snack-full/` / `snack-native-mirror/` duplicates were retired on
+2026-06-18 so this repo is the single canonical design surface.
+
+### The pipeline (where this fits)
+
+```
+DESIGN (here)        →  PORT                       →  WIRE                    →  SHIP
+Hangpost-snack          hangpost-full-stack/          hangpost-full-stack/       EAS Build →
+(this repo, Snack,      apps/native                   apps/api                   TestFlight →
+ mock data)             (Expo + NativeWind)           (FastAPI backend)          App Store
+```
+
+Iterate the design here until a flow feels finished, then port it into
+`hangpost-full-stack/apps/native` and wire it to the API. **The porting backlog
+is the diff between this repo and `apps/native`** (screens/components that exist
+here but not there yet — e.g. PersonProfile, PostDetail, Search, Settings,
+Legal, Welcome, the richer tag-pickers, and the "The Bulletin" feed rename).
 
 ## Open it
 
 Now that this repo is public, the browser paths all work again:
 
 1. **Snack (fastest).** Go to <https://snack.expo.dev> → project menu (☰) →
-   **Import git repository** → paste `https://github.com/ai-bryguy101/Hangpost-snack`.
-   The root app boots in the web preview; switch to **iOS / Android** for a
+   **Import git repository** → paste `https://github.com/ai-bryguy101/hangpost-snack`.
+   The app boots in the web preview; switch to **iOS / Android** for a
    simulated device, or **My Device** to open it in Expo Go via QR.
-   *To preview the mirror,* import it as its own Snack by dragging the
-   `snack-native-mirror/` files in, or use the Codespace path below.
 2. **Codespace.** Open a Codespace on this repo, then `npm install &&
-   npx expo start --web` (root app) or `cd snack-native-mirror && npm install &&
-   npx expo start --web` (mirror). For your phone: `npx expo start --tunnel` and
+   npx expo start --web`. For your phone: `npx expo start --tunnel` and
    scan the QR with Expo Go.
 
 > ⚠️ **Import from a slash-free branch** (i.e. `main`). Snack misparses
@@ -110,6 +123,13 @@ affects ranking.
 People photos are `pravatar.cc` placeholders; "any input works" on auth/verify;
 the world resets on reload. The store (`lib/store.tsx`) is synchronous on purpose
 — flows feel instant so the *design* is what you're judging.
+
+## Repo cleanup (2026-06-18)
+
+This repo is now the **single canonical design source**. The duplicate design
+copies that used to be hand-synced alongside it (`hangpost-full-stack/snack-full`
+and the `snack-native-mirror/` copies) were retired so there is exactly one place
+to iterate the design. Port target is `hangpost-full-stack/apps/native`.
 
 ## Recent design updates (2026-06-17)
 
