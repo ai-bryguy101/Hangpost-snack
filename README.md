@@ -55,7 +55,7 @@ worth exploring, ranked, connect before you even see the feed). Or *I have an
 account* → straight in as a demo persona with a believable week of history.
 
 **Feed:** liveness strip + a horizontal **Happening today** rail · three lenses
-(Nearby / City Guide / Communities; "This week" merged into Nearby 2026-06-17) ·
+(The Bulletin / City Guide / Communities; "This week" merged into The Bulletin 2026-06-17) ·
 first-run welcome nudge · **no
 emoji reactions, by design** — hangouts carry *Interested* / *I'm in*, tips carry
 *Thanks!* (which powers City Guide ranking + the City Expert badge) · City Guide
@@ -110,6 +110,18 @@ affects ranking.
 People photos are `pravatar.cc` placeholders; "any input works" on auth/verify;
 the world resets on reload. The store (`lib/store.tsx`) is synchronous on purpose
 — flows feel instant so the *design* is what you're judging.
+
+## Recent design updates (2026-06-17)
+
+- **Main feed = "The Bulletin"** (was "Nearby" — the whole app is already
+  location-scoped, so that name restated the premise). The city posterboard, named.
+- **"What are you into?" is now themed + much richer** — categorized sections
+  (sports / outdoors / making / music / food / games · going-out / culture /
+  causes / ideas / wellness · music genres + **artists on repeat** + screen +
+  reading) with a prominent "add your own" for the niche taste only you know.
+- **First 10:** tap any pick to open that person's full profile.
+- **Calendar icon in the feed header → "Your hangouts"** — your private lineup of
+  the hangouts you've tapped *I'm in* for, with a count badge.
 
 ---
 

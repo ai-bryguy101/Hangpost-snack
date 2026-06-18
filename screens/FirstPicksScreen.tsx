@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Sparkles, UserCheck } from "lucide-react-native";
+import { Coffee, UserCheck } from "lucide-react-native";
 
 import { useStore } from "../lib/store";
+import { useRouter } from "../lib/router";
 import { showToast } from "../lib/toast";
 import { colors, radiusCard } from "../theme/colors";
 import { sh } from "../theme/shared";
@@ -15,6 +16,7 @@ import { Commonalities } from "../components/Commonalities";
  * people worth meeting. Connect to any of them before you even see the feed. */
 export function FirstPicksScreen({ onDone }: { onDone: () => void }) {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const { me, people, pickIds, pymkIds, contactsSynced, edges, connect, personOf } = useStore();
   const [sent, setSent] = useState<string[]>([]);
 
@@ -34,7 +36,7 @@ export function FirstPicksScreen({ onDone }: { onDone: () => void }) {
   return (
     <View style={[sh.root, { paddingTop: insets.top }]}>
       <View style={styles.header}>
-        <Sparkles size={22} color={colors.primaryDark} />
+        <Coffee size={22} color={colors.primaryDark} />
         <Text style={styles.title}>
           {me.name.split(" ")[0]}, your first 10
         </Text>
@@ -54,17 +56,22 @@ export function FirstPicksScreen({ onDone }: { onDone: () => void }) {
             <View key={id} style={[styles.card, sh.cardShadow]}>
               <View style={[sh.row, { alignItems: "flex-start" }]}>
                 <Text style={styles.rank}>{i + 1}</Text>
-                <Avatar name={p.name} src={p.avatar} size="lg" verified={p.verified} />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.name}>{p.name}</Text>
-                  {fromContacts ? (
-                    <Text style={styles.contactsTag}>In your contacts</Text>
-                  ) : p.intro ? (
-                    <Text style={styles.intro} numberOfLines={2}>
-                      {p.intro}
-                    </Text>
-                  ) : null}
-                </View>
+                <Pressable
+                  style={[sh.row, { flex: 1, alignItems: "flex-start" }]}
+                  onPress={() => router.push({ pathname: "/person/[id]", params: { id } })}
+                >
+                  <Avatar name={p.name} src={p.avatar} size="lg" verified={p.verified} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.name}>{p.name}</Text>
+                    {fromContacts ? (
+                      <Text style={styles.contactsTag}>In your contacts</Text>
+                    ) : p.intro ? (
+                      <Text style={styles.intro} numberOfLines={2}>
+                        {p.intro}
+                      </Text>
+                    ) : null}
+                  </View>
+                </Pressable>
                 <Button
                   size="sm"
                   variant={isSent ? "secondary" : "primary"}

@@ -5,6 +5,7 @@ import { ArrowLeft, BadgeCheck, GraduationCap, MapPin, ShieldAlert, Users } from
 
 import { useStore, type Me } from "../lib/store";
 import { DEMO_ME } from "../data/seed";
+import { HOBBY_GROUPS, INTEREST_GROUPS, LIKE_GROUPS } from "../data/interests";
 import { PLACES, RADII, type Place } from "../lib/places";
 import { CITIES } from "../lib/cities";
 import { COLLEGES } from "../lib/colleges";
@@ -12,7 +13,7 @@ import { showToast } from "../lib/toast";
 import { colors } from "../theme/colors";
 import { sh } from "../theme/shared";
 import { Button } from "../components/ui/Button";
-import { TagPicker } from "../components/TagPicker";
+import { GroupedTagPicker } from "../components/GroupedTagPicker";
 import { PlacePicker } from "../components/PlacePicker";
 import { ComboField } from "../components/ComboField";
 
@@ -22,9 +23,6 @@ import { ComboField } from "../components/ComboField";
 
 const STEPS = 5;
 
-const HOBBY_IDEAS = ["running", "bouldering", "cooking", "photography", "board games", "soccer", "yoga", "pottery", "hiking", "guitar"];
-const INTEREST_IDEAS = ["coffee", "live music", "museums", "happy hours", "book clubs", "startups", "food trucks", "markets"];
-const LIKE_IDEAS = ["indie music", "sci-fi", "true crime pods", "jazz", "fantasy novels", "film scores"];
 const PRONOUNS = ["she/her", "he/him", "they/them"];
 const PHOTO_OPTIONS = [5, 11, 15, 32, 49, 56].map((n) => `https://i.pravatar.cc/150?img=${n}`);
 
@@ -68,11 +66,12 @@ export function OnboardingScreen({ onDone, onBack }: { onDone: () => void; onBac
   })();
   const underage = dobAge !== null && dobAge < 18;
 
+  const pickedTotal = hobbies.length + interests.length + likes.length;
   const canNext =
     step === 0
       ? name.trim().length > 0 && handle.trim().length >= 3 && dobAge !== null && !underage
       : step === 1
-        ? hobbies.length + interests.length + likes.length >= 3
+        ? pickedTotal >= 3
         : true;
 
   function finish(withContacts: boolean) {
@@ -209,16 +208,27 @@ export function OnboardingScreen({ onDone, onBack }: { onDone: () => void; onBac
         {step === 1 && (
           <>
             <Text style={sh.centerSub}>
-              Pick at least 3 across the board. These power your matches AND give your first hangouts a topic.
+              The more you share, the better we match you — and the better the hangouts and tips we
+              can put in front of you. From your weekly run club to the niche band only you know. Tap
+              everything that's actually you.
             </Text>
-            <Field label="Hobbies — things you ACTUALLY do">
-              <TagPicker suggestions={HOBBY_IDEAS} selected={hobbies} onChange={setHobbies} />
+            <View style={styles.counterPill}>
+              <Text style={styles.counterText}>
+                {pickedTotal === 0
+                  ? "Nothing picked yet — start tapping 👇"
+                  : pickedTotal < 5
+                    ? `${pickedTotal} picked · a few more makes your matches way better`
+                    : `${pickedTotal} picked · love it 🎉`}
+              </Text>
+            </View>
+            <Field label="What do you actually do?" hint="your weekly hobbies — the stuff you'd invite someone along to">
+              <GroupedTagPicker groups={HOBBY_GROUPS} selected={hobbies} onChange={setHobbies} addPlaceholder="Add a hobby…" />
             </Field>
-            <Field label="Interests — things you're drawn to">
-              <TagPicker suggestions={INTEREST_IDEAS} selected={interests} onChange={setInterests} />
+            <Field label="What are you into around town?" hint="the scenes and things you're drawn to">
+              <GroupedTagPicker groups={INTEREST_GROUPS} selected={interests} onChange={setInterests} addPlaceholder="Add an interest…" />
             </Field>
-            <Field label="Likes — things you could talk about all night">
-              <TagPicker suggestions={LIKE_IDEAS} selected={likes} onChange={setLikes} />
+            <Field label="Your taste — what you'd talk about all night" hint="music, shows, books… add the niche artist only you know">
+              <GroupedTagPicker groups={LIKE_GROUPS} selected={likes} onChange={setLikes} addPlaceholder="Add a band, artist, show, author…" />
             </Field>
           </>
         )}
@@ -337,6 +347,14 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
 const styles = StyleSheet.create({
   dots: { flexDirection: "row", gap: 5 },
   dot: { height: 6, width: 6, borderRadius: 3, backgroundColor: colors.border },
+  counterPill: {
+    alignSelf: "flex-start",
+    borderRadius: 999,
+    backgroundColor: colors.primaryLight,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  counterText: { fontSize: 12, fontWeight: "700", color: colors.primaryDeep },
   chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   choiceChip: { borderRadius: 999, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 8 },
   choiceOn: { backgroundColor: colors.primaryDark, borderColor: colors.primaryDark },
