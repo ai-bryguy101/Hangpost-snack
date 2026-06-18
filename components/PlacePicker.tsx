@@ -31,7 +31,7 @@ export function PlacePicker({
       </View>
 
       {results.length === 0 ? (
-        <Text style={styles.noMatch}>No matches — try a major city name.</Text>
+        <Text style={styles.noMatch}>No cities found — try a major city name.</Text>
       ) : (
         results.map((place) => {
           const active = place.label === selected.label;

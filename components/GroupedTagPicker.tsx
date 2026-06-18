@@ -5,13 +5,14 @@ import { Plus } from "lucide-react-native";
 import { colors } from "../theme/colors";
 import type { TagGroup } from "../data/interests";
 
-/** Themed, multi-select tag chips + a free "add your own" input. The grouped
- * cousin of TagPicker: the "What are you into?" page uses it so a long option
- * list reads as scannable sections (Music / Outdoors / …) instead of a flat
- * wall. All groups write into ONE `selected` array (a single profile field);
- * anything the user types that isn't in a group surfaces under "Yours" so it's
- * never lost. Matching is case-insensitive, so curated chips and typed-in
- * additions de-dupe sensibly. */
+/** Write-in-first, themed tag picker. People always have something specific in
+ * mind that no curated list can hold (the one band only they know), so the free
+ * "add your own" box sits at the TOP as the primary action; the themed chip
+ * sections below are *ideas to tap*, not the only way in. All groups write into
+ * ONE `selected` array (a single profile field); anything typed that isn't in a
+ * group surfaces under "Yours" right beneath the box so it's never lost.
+ * De-dupe is case-insensitive, so curated chips and typed-in additions merge
+ * sensibly (typing "yoga" just lights up the curated "yoga" chip). */
 export function GroupedTagPicker({
   groups,
   selected,
@@ -39,13 +40,33 @@ export function GroupedTagPicker({
 
   const known = new Set(groups.flatMap((g) => g.options.map((o) => o.toLowerCase())));
   const yours = selected.filter((s) => !known.has(s.toLowerCase()));
-  const rendered: TagGroup[] = yours.length
-    ? [...groups, { label: "Yours", emoji: "✨", options: yours }]
+  // "Yours" rides at the top (right under the box) so write-ins land where you
+  // typed them; the curated sections follow as suggestions.
+  const ordered: TagGroup[] = yours.length
+    ? [{ label: "Yours", emoji: "✨", options: yours }, ...groups]
     : groups;
 
   return (
     <View style={{ gap: 14 }}>
-      {rendered.map((g) => (
+      <View style={{ gap: 6 }}>
+        <View style={styles.addRow}>
+          <TextInput
+            value={custom}
+            onChangeText={setCustom}
+            placeholder={addPlaceholder}
+            placeholderTextColor={colors.placeholder}
+            onSubmitEditing={addCustom}
+            returnKeyType="done"
+            style={styles.addInput}
+          />
+          <Pressable onPress={addCustom} style={styles.addButton}>
+            <Plus size={16} color={colors.primaryDark} />
+          </Pressable>
+        </View>
+        <Text style={styles.caption}>Write your own — or tap any idea below.</Text>
+      </View>
+
+      {ordered.map((g) => (
         <View key={g.label} style={{ gap: 8 }}>
           <Text style={styles.groupLabel}>
             {g.emoji} {g.label}
@@ -68,26 +89,13 @@ export function GroupedTagPicker({
           </View>
         </View>
       ))}
-      <View style={styles.addRow}>
-        <TextInput
-          value={custom}
-          onChangeText={setCustom}
-          placeholder={addPlaceholder}
-          placeholderTextColor={colors.placeholder}
-          onSubmitEditing={addCustom}
-          returnKeyType="done"
-          style={styles.addInput}
-        />
-        <Pressable onPress={addCustom} style={styles.addButton}>
-          <Plus size={16} color={colors.primaryDark} />
-        </Pressable>
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   groupLabel: { fontSize: 13, fontWeight: "700", color: colors.foreground },
+  caption: { fontSize: 12, color: colors.muted },
   wrap: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   chip: { borderRadius: 999, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 7 },
   chipOn: { backgroundColor: colors.primaryDark, borderColor: colors.primaryDark },
@@ -98,16 +106,16 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.primary,
     backgroundColor: colors.surface,
     paddingHorizontal: 14,
-    paddingVertical: 8,
-    fontSize: 13,
+    paddingVertical: 10,
+    fontSize: 14,
     color: colors.foreground,
   },
   addButton: {
-    height: 34,
-    width: 34,
+    height: 38,
+    width: 38,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 999,

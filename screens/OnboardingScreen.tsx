@@ -189,7 +189,7 @@ export function OnboardingScreen({ onDone, onBack }: { onDone: () => void; onBac
             />
             <ComboField
               label="College"
-              hint="optional — pick yours so fellow alumni match"
+              hint="optional — pick yours so fellow alumni can find you"
               value={college}
               onChangeText={setCollege}
               options={COLLEGES}
@@ -208,17 +208,17 @@ export function OnboardingScreen({ onDone, onBack }: { onDone: () => void; onBac
         {step === 1 && (
           <>
             <Text style={sh.centerSub}>
-              The more you share, the better we match you — and the better the hangouts and tips we
-              can put in front of you. From your weekly run club to the niche band only you know. Tap
-              everything that's actually you.
+              The more you share, the better we get at finding the people you'd actually click
+              with — and the better the hangouts and tips we can put in front of you. From your
+              weekly run club to the niche band only you know. Write in anything, or tap what's you.
             </Text>
             <View style={styles.counterPill}>
               <Text style={styles.counterText}>
                 {pickedTotal === 0
-                  ? "Nothing picked yet — start tapping 👇"
+                  ? "Nothing yet — add what you're into 👇"
                   : pickedTotal < 5
-                    ? `${pickedTotal} picked · a few more makes your matches way better`
-                    : `${pickedTotal} picked · love it 🎉`}
+                    ? `${pickedTotal} added · a few more helps us find your people`
+                    : `${pickedTotal} added · love it 🎉`}
               </Text>
             </View>
             <Field label="What do you actually do?" hint="your weekly hobbies — the stuff you'd invite someone along to">
@@ -294,7 +294,7 @@ export function OnboardingScreen({ onDone, onBack }: { onDone: () => void; onBac
               <Text style={{ fontSize: 18 }}>👋</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.verifyText}>I'm new in town</Text>
-                <Text style={sh.hint}>Other newcomers can find you — two people who just moved are a great match.</Text>
+                <Text style={sh.hint}>Other newcomers can find you — two people who just moved have a lot in common.</Text>
               </View>
             </Pressable>
           </>

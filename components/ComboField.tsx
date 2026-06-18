@@ -96,8 +96,8 @@ export function ComboField({
       {showEscape ? (
         <Text style={sh.hint}>
           {matches.length > 0
-            ? `Tap a match, or keep “${typed}” as your own.`
-            : `No match — “${typed}” saves as you typed it.`}
+            ? `Tap a suggestion, or keep “${typed}” as your own.`
+            : `Not listed — “${typed}” saves as you typed it.`}
         </Text>
       ) : (
         hint ? <Text style={sh.hint}>{hint}</Text> : null
