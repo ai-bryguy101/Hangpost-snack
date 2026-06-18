@@ -10,6 +10,7 @@ import type {
   Notif,
   Person,
   Thread,
+  UserStatus,
 } from "../lib/store";
 
 const av = (n: number) => `https://i.pravatar.cc/150?img=${n}`;
@@ -315,8 +316,40 @@ export function buildNotifs(): Notif[] {
     { id: "n3", kind: "invite", fromId: "emma", hangId: "h-run", body: "Tidal Basin run is on again tomorrow 7am", at: t(-5), read: false },
     { id: "n4", kind: "joined_nearby", fromId: "omar", hangId: null, body: "you both know Sam", at: t(-30), read: true },
     { id: "n5", kind: "reminder", fromId: null, hangId: "h-trivia", body: "Tonight: trivia at Town Tavern, 7 PM — 3 going", at: t(-2), read: true },
+    { id: "n7", kind: "status", fromId: "nia", hangId: null, body: "is free tonight — trying a new U St spot 🍜", at: t(-1.5), read: false },
     { id: "n6", kind: "digest", fromId: null, hangId: null, body: "Your week nearby: 7 hangouts, 3 new neighbors, 8 fresh tips", at: t(-50), read: true },
   ];
+}
+
+/** Seed a few connections as "free right now" so the Tonight surface is alive
+ * (statuses are connection-scoped — these people are all DEMO_EDGES connections). */
+export function buildStatuses(): Record<string, UserStatus> {
+  return {
+    nia: {
+      id: "st-nia", userId: "nia", kind: "food",
+      body: "Trying a new spot on U St tonight — room for one more 🍜",
+      createdAt: t(-1.5), expiresAt: t(7), expiresLabel: "tonight",
+      reactions: { "👋": ["sam"], "🍻": ["jordan"] }, aroundIds: [],
+    },
+    jordan: {
+      id: "st-jordan", userId: "jordan", kind: "active",
+      body: "Free this weekend, want to get active 🏃",
+      createdAt: t(-3), expiresAt: t(40), expiresLabel: "this weekend",
+      reactions: {}, aroundIds: ["sam"],
+    },
+    ben: {
+      id: "st-ben", userId: "ben", kind: "open",
+      body: "Free this weekend — anything outdoors and $0, I'm there 🌳",
+      createdAt: t(-4), expiresAt: t(44), expiresLabel: "this weekend",
+      reactions: { "🙌": ["grace"] }, aroundIds: [],
+    },
+    sam: {
+      id: "st-sam", userId: "sam", kind: "open",
+      body: "Down for whatever tonight 🤷",
+      createdAt: t(-0.8), expiresAt: t(9), expiresLabel: "tonight",
+      reactions: {}, aroundIds: ["jordan", "nia"],
+    },
+  };
 }
 
 export function buildCommunities(): Community[] {
@@ -328,7 +361,10 @@ export function buildCommunities(): Community[] {
   ];
 }
 
-export const DEMO_EDGES: Record<string, EdgeState> = { sam: "connected", priya: "connected", chris: "in" };
+export const DEMO_EDGES: Record<string, EdgeState> = {
+  sam: "connected", priya: "connected", jordan: "connected",
+  nia: "connected", ben: "connected", chris: "in",
+};
 
 export const FAMILIAR: FamiliarEntry[] = [
   { id: "chris", count: 2, lastVenue: "National Mall, west fields" },

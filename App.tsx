@@ -33,6 +33,7 @@ import { CommunityScreen } from "./screens/CommunityScreen";
 import { CommunityNewScreen } from "./screens/CommunityNewScreen";
 import { SettingsScreen } from "./screens/SettingsScreen";
 import { LegalScreen } from "./screens/LegalScreen";
+import { TonightScreen } from "./screens/TonightScreen";
 
 /**
  * Hangpost — the FULL product vision, end to end, on mock data.
@@ -82,6 +83,8 @@ function ScreenFor({ route, onSignOut }: { route: Route; onSignOut: () => void }
       return <MyConnectionsScreen />;
     case "/upcoming":
       return <UpcomingScreen />;
+    case "/tonight":
+      return <TonightScreen />;
     case "/safety":
       return <SafetyCenterScreen />;
     case "/search":

@@ -4,6 +4,7 @@ import {
   buildCommunities,
   buildHangs,
   buildNotifs,
+  buildStatuses,
   buildThreads,
   DEMO_EDGES,
   DEMO_ME,
@@ -13,6 +14,7 @@ import {
   PYMK_IDS,
   t,
 } from "../data/seed";
+import { computeExpiry } from "../data/statuses";
 
 /** The whole prototype's world state + every mutation the UI performs.
  * Synchronous on purpose — this build is for feeling the flows, not for
@@ -126,7 +128,8 @@ export type NotifKind =
   | "joined_nearby"
   | "reminder"
   | "digest"
-  | "comment";
+  | "comment"
+  | "status";
 
 export interface Notif {
   id: string;
@@ -136,6 +139,27 @@ export interface Notif {
   body: string | null;
   at: string;
   read: boolean;
+}
+
+export type StatusKind = "going_out" | "active" | "cowork" | "food" | "open";
+
+/** One-tap "I'm around" availability broadcast to your connections — ephemeral
+ * and no-rejection (brief: Hangpost-Full-Stack/docs/briefs/STATUS_POSTS.md). One
+ * active per user; posting a new one supersedes the last. Connection-scoped
+ * only — never shown to nearby strangers (the key safety line vs a public post). */
+export interface UserStatus {
+  id: string;
+  userId: string;
+  kind: StatusKind;
+  body: string;
+  createdAt: string;
+  expiresAt: string;
+  /** "tonight" | "this weekend" | "tomorrow" — drives display + auto-expiry. */
+  expiresLabel: string;
+  /** emoji -> reactor ids (mock; one reaction per person). */
+  reactions: Record<string, string[]>;
+  /** connection ids who tapped "I'm around too". */
+  aroundIds: string[];
 }
 
 export interface Community {
@@ -187,6 +211,7 @@ interface StoreApi {
   familiar: FamiliarEntry[];
   pickIds: string[];
   pymkIds: string[];
+  statuses: Record<string, UserStatus>;
 
   personOf: (id: string) => Person;
   hangOf: (id: string) => Hang | undefined;
@@ -195,6 +220,8 @@ interface StoreApi {
   unreadNotifs: () => number;
   unreadThreads: () => number;
   myUpcoming: () => Hang[];
+  myStatus: () => UserStatus | null;
+  connectionStatuses: () => UserStatus[];
 
   dismissFirstRun: () => void;
   rsvp: (hangId: string, status: "going" | "interested") => void;
@@ -227,6 +254,10 @@ interface StoreApi {
   enablePush: () => void;
   toggleNotifPref: (key: keyof NotifPrefs) => void;
   checkin: (threadId: string, note: string) => void;
+  postStatus: (kind: StatusKind, body: string) => void;
+  clearStatus: () => void;
+  reactStatus: (userId: string, emoji: string) => void;
+  toggleAround: (userId: string) => void;
   setMe: (me: Me) => void;
 }
 
@@ -255,6 +286,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     nearby: true,
   });
   const [notifAsked, setNotifAsked] = useState(false);
+  const [statuses, setStatuses] = useState<Record<string, UserStatus>>(buildStatuses);
 
   const personOf = useCallback(
     (id: string): Person => (id === "me" ? me : PEOPLE[id]),
@@ -291,7 +323,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     return {
       me, people: PEOPLE, hangs, threads, notifs, communities, edges, blocked,
       dismissedMet, contactsSynced, firstRun, notifPrefs, notifAsked,
-      familiar: FAMILIAR, pickIds: PICK_IDS, pymkIds: PYMK_IDS,
+      familiar: FAMILIAR, pickIds: PICK_IDS, pymkIds: PYMK_IDS, statuses,
 
       personOf, hangOf, threadOf, threadForHang,
 
@@ -307,6 +339,17 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           .filter((h) => h.type === "hangout" && (h.goingIds.includes("me") || h.authorId === "me"))
           .filter((h) => h.time !== null && new Date(h.time).getTime() > Date.now() - 3 * 3600_000)
           .sort((a, b) => (a.time ?? "").localeCompare(b.time ?? "")),
+
+      myStatus: () => {
+        const s = statuses["me"];
+        return s && new Date(s.expiresAt).getTime() > Date.now() ? s : null;
+      },
+      connectionStatuses: () =>
+        Object.values(statuses)
+          .filter((s) => s.userId !== "me")
+          .filter((s) => edges[s.userId] === "connected" && !blocked.includes(s.userId))
+          .filter((s) => new Date(s.expiresAt).getTime() > Date.now())
+          .sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
 
       dismissFirstRun: () => setFirstRun(false),
 
@@ -524,6 +567,65 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           lastReadAt: now(),
         })),
 
+      postStatus: (kind, body) => {
+        const text = body.trim();
+        if (!text) return;
+        const { expiresAt, label } = computeExpiry(text);
+        setStatuses((prev) => ({
+          ...prev,
+          me: {
+            id: newId("st"),
+            userId: "me",
+            kind,
+            body: text,
+            createdAt: now(),
+            expiresAt,
+            expiresLabel: label,
+            reactions: {},
+            aroundIds: [],
+          },
+        }));
+      },
+
+      clearStatus: () =>
+        setStatuses((prev) => {
+          const next = { ...prev };
+          delete next["me"];
+          return next;
+        }),
+
+      reactStatus: (userId, emoji) =>
+        setStatuses((prev) => {
+          const s = prev[userId];
+          if (!s) return prev;
+          // One reaction per person: drop "me" everywhere, then toggle this one.
+          const cleaned: Record<string, string[]> = {};
+          let had = false;
+          for (const [e, ids] of Object.entries(s.reactions)) {
+            if (e === emoji && ids.includes("me")) had = true;
+            const without = ids.filter((x) => x !== "me");
+            if (without.length) cleaned[e] = without;
+          }
+          if (!had) cleaned[emoji] = [...(cleaned[emoji] ?? []), "me"];
+          return { ...prev, [userId]: { ...s, reactions: cleaned } };
+        }),
+
+      toggleAround: (userId) =>
+        setStatuses((prev) => {
+          const s = prev[userId];
+          if (!s) return prev;
+          const has = s.aroundIds.includes("me");
+          return {
+            ...prev,
+            [userId]: {
+              ...s,
+              aroundIds: has
+                ? s.aroundIds.filter((x) => x !== "me")
+                : [...s.aroundIds, "me"],
+            },
+          };
+        }),
+
       setMe: (next) => {
         setMeState(next);
         setFirstRun(true);
@@ -531,8 +633,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     };
   }, [
     me, hangs, threads, notifs, communities, edges, blocked, dismissedMet,
-    contactsSynced, firstRun, notifPrefs, notifAsked, personOf, patchHang,
-    patchThread, ensureHangThread,
+    contactsSynced, firstRun, notifPrefs, notifAsked, statuses, personOf,
+    patchHang, patchThread, ensureHangThread,
   ]);
 
   return <StoreContext.Provider value={api}>{children}</StoreContext.Provider>;

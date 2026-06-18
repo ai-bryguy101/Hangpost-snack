@@ -78,6 +78,12 @@ detail with comments, the full who's-going list ("usually shows up" hints),
 group-chat door, and **Share my plan** (send time/place/people to someone you
 trust).
 
+**Statuses (top of the feed):** **"What are you up to?"** → one-tap availability
+presets (or write your own) that only your connections see and that auto-expire,
+plus **🌙 Who's free** and the **Tonight** surface, where a status becomes a
+react, an *"I'm around too,"* a reply, or a plan — the no-rejection on-ramp to an
+actual hang, a rung below hosting a hangout.
+
 **The hangout loop:** I'm in → toast → it's on your private **Your hangouts**
 agenda and you're in the group chat. Chat has the **plan pinned**, an
 **icebreaker** when the room is quiet, **"I'm here 📍"** check-in on the day, and
@@ -100,7 +106,8 @@ with **"Join them at…"** — their public hangouts, the no-cold-DM way in. DMs
 locked until connected.
 
 **Alerts:** requests (accept inline), accepted, invites, tonight reminder, "new
-person joined nearby — you both know Sam", and the weekly digest. All deep-link.
+person joined nearby — you both know Sam", a **connection's status** ("Nia is
+free tonight" → opens Tonight), and the weekly digest. All deep-link.
 
 **Profile:** gradient hero, photo-verified badge, tappable stats (Hangouts =
 private lineup), structured cards, home base, new-in-town toggle, and the
@@ -134,6 +141,16 @@ to iterate the design. Port target is `hangpost-full-stack/apps/native`.
 
 ## Recent design updates (2026-06-18)
 
+- **Statuses — one-tap "I'm free" (NEW).** The lowest-friction posting in the
+  app. From the top of the feed, **Share status** → a sheet of brand-voice
+  presets (*"Free tonight and powerless to say no"*, *"Touching grass this
+  weekend — join me"*, *"WFH at a café, come cowork"*) or write your own; it
+  posts in one tap, is **visible only to your connections**, and **disappears on
+  its own** (no time-picker). The feed shows **🌙 Who's free** (your connections'
+  live statuses) and a **Tonight** screen (`/tonight`) with one-tap **react**,
+  **"I'm around too"**, **reply**, and **make a plan**. No-rejection by design;
+  connection-scoped, never to nearby strangers, never with location. Built from
+  the canonical brief `Hangpost-Full-Stack/docs/briefs/STATUS_POSTS.md`.
 - **"What are you into?" is now write-in-first.** Each section (hobbies /
   interests / likes) leads with its **add-your-own box at the top** — people
   write in far more than any list can hold — and the curated themed chips sit
@@ -150,6 +167,10 @@ to iterate the design. Port target is `hangpost-full-stack/apps/native`.
   and the large online universities. The wedge user (a just-moved college grad)
   usually went to a state regional, not an Ivy, so the autocomplete now
   canonicalises where they actually went. Free-text fallback still covers the rest.
+  Bigger again this pass (~580 hand-curated names); for the **exhaustive ~2,000
+  four-year set**, `scripts/build_colleges.mjs` regenerates `lib/colleges.ts`
+  from a public dataset (run it in a Codespace — it needs network the design
+  sandbox doesn't have).
 
 ## Recent design updates (2026-06-17)
 
