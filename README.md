@@ -37,24 +37,37 @@ Legal, Welcome, the richer tag-pickers, and the "The Bulletin" feed rename).
 
 ## Open it
 
-Now that this repo is public, the browser paths all work again:
+Now that this repo is public, the browser paths all work again. **To see it
+on your phone in Expo Go, pick one:**
 
-1. **Snack (fastest).** Go to <https://snack.expo.dev> → project menu (☰) →
-   **Import git repository** → paste `https://github.com/ai-bryguy101/hangpost-snack`.
-   The app boots in the web preview; switch to **iOS / Android** for a
-   simulated device, or **My Device** to open it in Expo Go via QR.
-2. **Codespace.** Open a Codespace on this repo, then `npm install &&
-   npx expo start --web`. For your phone: `npx expo start --tunnel` and
-   scan the QR with Expo Go.
+**A. Snack (fastest — no terminal).** Go to <https://snack.expo.dev> → project
+menu (☰) → **Import git repository** → paste
+`https://github.com/ai-bryguy101/hangpost-snack`. When it loads, open the
+**My Device** tab → a **QR code** appears → open **Expo Go** on your phone and
+scan it. (The **iOS / Android** tabs give a simulated device in the browser;
+**Web** runs it inline.)
+
+**B. Codespace (most reliable for a real phone).** Open a Codespace on this
+repo (green **Code** button → **Codespaces** → create), then in its terminal:
+
+```bash
+npm install                 # if peer-deps complain: npm install --legacy-peer-deps
+npx expo install --fix      # align RN/React/expo-* to the SDK Expo Go supports
+npx expo start --tunnel     # --tunnel makes the QR reachable from your phone
+```
+
+A QR code prints in the terminal → open **Expo Go** → scan it. (Use `--tunnel`,
+not plain `start`, since your phone isn't on the Codespace's network.) For a
+quick browser check instead, `npx expo start --web`.
 
 > ⚠️ **Import from a slash-free branch** (i.e. `main`). Snack misparses
 > `…/tree/claude/branch-name/…` URLs — it reads the branch as just `claude`.
-> Once these files are on `main`, the import above just works.
+> These files are on `main`, so the import above just works.
 >
 > ⚠️ `app.json` deliberately has **no `sdkVersion` pin** — Snack drops old SDKs
-> and a stale pin fails the import. Unpinned, Snack uses its current default;
-> nothing here depends on a specific SDK. If an import errors on a dependency,
-> accept Snack's suggested version in the prompt.
+> and a stale pin fails the import. Unpinned, Snack uses its current default and
+> `expo install --fix` (path B) pins everything to that SDK. If a Snack import
+> errors on a dependency, accept Snack's suggested version in the prompt.
 >
 > ⚠️ **Keep the repo to `.tsx` / `.ts` / `.json` / `.md` files only.** Snack treats
 > an unknown extension (e.g. a `.mjs` build script) as a binary *asset* and the
